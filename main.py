@@ -125,7 +125,13 @@ def _process_game(game_id):
     return game_id, results, metrics
 
 
-for game_id, results, metrics in process_map(_process_game, range(args.games), disable=args.print_metrics_every_game):
+for game_id, results, metrics in process_map(
+    _process_game,
+    range(args.games),
+    max_workers=args.num_processes,
+    chunksize=max(1, args.games // args.num_processes),
+    disable=args.print_metrics_every_game
+):
 
     # Count wins
     if results["outcome"] == "WIN":
