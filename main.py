@@ -1,6 +1,5 @@
 from game import run_game, GameConfig
 from game.player import Player
-from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 import argparse
 from collections import Counter
