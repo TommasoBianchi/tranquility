@@ -87,7 +87,7 @@ def compute_metrics(game_config, player_remapping_dict, outcome, history, final_
     total_discarded_cards= sum(discarded_cards_by_player.values())
 
     # Remaining deck size
-    remaining_deck_size = config.n_cards - total_discarded_cards
+    remaining_deck_size = config.n_cards - total_discarded_cards - filled_board_spaces
 
     return {
         "outcome": outcome,
