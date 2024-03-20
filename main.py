@@ -22,7 +22,7 @@ config_group.add_argument("--board-size", type=int, default=36, help="The size o
 config_group.add_argument("--hand-sizes", type=int, default=5, help="The size of each players' hand")
 config_group.add_argument("--n-cards", type=int, default=80, help="The total number of numbered cards")
 config_group.add_argument("--n-finish", type=int, default=5, help="The total number of finish cards")
-config_group.add_argument("--start-discard-size", type=int, default=2, help="The number of cards to discard when the start card is played")
+config_group.add_argument("--start-discard-size", type=int, default=8, help="The number of cards to discard when the start card is played")
 config_group.add_argument("--pass-discard-size", type=int, default=2, help="The number of cards to discard when passing the turn")
 # Run config
 parser.add_argument("--games", type=int, default=10, help="The number of games to simulate")

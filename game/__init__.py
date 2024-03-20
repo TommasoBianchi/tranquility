@@ -29,8 +29,9 @@ def run_game(seed: int, config: GameConfig, player_types):
     # Init board
     board = Board(size=config.board_size, n_cards=config.n_cards)
 
-    start_discards = [int(np.ceil(config.start_discard_size // config.n_players))] * (config.n_players - 1)
-    start_discards.append(config.start_discard_size - sum(start_discards))
+    start_discards = [config.start_discard_size // config.n_players] * config.n_players
+    for i in range(config.start_discard_size - sum(start_discards)):
+        start_discards[i] += 1
 
     start, start_player_id = False, -1
     win, lose = False, False
