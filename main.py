@@ -1,6 +1,7 @@
 from game import run_game, GameConfig
 from game.player import Player
 from tqdm import tqdm
+from tqdm.contrib.concurrent import process_map
 import argparse
 from collections import Counter
 import numbers
@@ -8,6 +9,7 @@ import importlib
 import importlib.util
 import inspect
 from os.path import dirname, join
+from os import cpu_count
 import numpy as np
 
 parser = argparse.ArgumentParser(
@@ -27,6 +29,7 @@ config_group.add_argument("--pass-discard-size", type=int, default=2, help="The 
 parser.add_argument("--games", type=int, default=10, help="The number of games to simulate")
 parser.add_argument("--players", type=str, nargs="+", help="The player agent classes to use in the simulation")
 parser.add_argument("--start-seed", type=int, default=0, help="The starting random seed to use (each game will offset this by 1, incrementally)")
+parser.add_argument("--num-processes", type=int, default=cpu_count(), help=f"The number of processes to use for concurrent game evaluation (default on this host: {cpu_count()})")
 # Metrics config
 metrics_group = parser.add_argument_group("metrics", "Metrics display configurations")
 metrics_group.add_argument("--print-metrics-every-game", action="store_true", default=False, help="Whether to print metrics for every game")
@@ -115,16 +118,19 @@ def print_metrics(game_id, metrics):
 n_wins = 0
 total_metrics = {}
 best_game_results = { "outcome": None, "results": None, "metrics": None }
-for game_id in tqdm(range(args.games), disable=args.print_metrics_every_game):
-    # Run game
+
+
+def _process_game(game_id):
     results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
+    metrics = compute_metrics(game_config=config, player_remapping_dict=player_remapping_dict, percentage_digits=args.percentage_digits, **results)
+    return game_id, results, metrics
+
+
+for game_id, results, metrics in process_map(_process_game, range(args.games), disable=args.print_metrics_every_game):
 
     # Count wins
     if results["outcome"] == "WIN":
         n_wins += 1
-
-    # Compute metrics
-    metrics = compute_metrics(game_config=config, player_remapping_dict=player_remapping_dict, percentage_digits=args.percentage_digits, **results)
 
     # Update best game
     if best_game_results["outcome"] is None or \
