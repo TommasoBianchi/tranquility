@@ -65,7 +65,7 @@ for i, player_path in enumerate(players_paths):
         print(f"Unable to import code for player in path {player_path}")
         print(f"\tCaused by: {e}")
         exit(1)
-player_remapping_dict = {id: name.__name__ for id, name in enumerate(player_types)}
+player_remapping_dict = {id: f"{name.__name__}{id}" for id, name in enumerate(player_types)}
 
 
 def compute_metrics(game_config, player_remapping_dict, outcome, history, final_board, percentage_digits=2):
