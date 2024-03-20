@@ -115,7 +115,7 @@ def print_metrics(game_id, metrics):
 n_wins = 0
 total_metrics = {}
 best_game_results = { "outcome": None, "results": None, "metrics": None }
-for game_id in range(args.games) if args.print_metrics_every_game else tqdm(range(args.games)):
+for game_id in tqdm(range(args.games), disable=args.print_metrics_every_game):
     # Run game
     results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
 
