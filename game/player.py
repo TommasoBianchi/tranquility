@@ -23,7 +23,7 @@ class Player(ABC):
         '''
         returns true if it's possible to use the standard discard to pass the turn
         '''
-        return len(self.hand) > self.pass_discard_size
+        return len(self.hand) >= self.pass_discard_size
     
     def check_possible_play(self):
         '''
