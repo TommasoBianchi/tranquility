@@ -10,6 +10,7 @@ import inspect
 from os.path import dirname, join
 from os import cpu_count
 import numpy as np
+import warnings
 
 parser = argparse.ArgumentParser(
     prog='main.py',
@@ -120,7 +121,9 @@ best_game_results = { "outcome": None, "results": None, "metrics": None }
 
 
 def _process_game(game_id):
-    results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
     metrics = compute_metrics(game_config=config, player_remapping_dict=player_remapping_dict, percentage_digits=args.percentage_digits, **results)
     return game_id, results, metrics
 
