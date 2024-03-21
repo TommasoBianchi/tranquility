@@ -8,8 +8,8 @@ class GameConfig:
     hand_sizes: int = 5
     n_cards: int = 80
     n_finish: int = 5
-    start_discard_size: int = 2
-    pass_discard_size: int = 8
+    start_discard_size: int = 8
+    pass_discard_size: int = 2
     
     def __post_init__(self):
         assert self.n_players > 0
