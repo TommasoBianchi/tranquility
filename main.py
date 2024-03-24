@@ -10,6 +10,7 @@ import inspect
 from os.path import dirname, join
 from os import cpu_count
 import numpy as np
+import warnings
 
 parser = argparse.ArgumentParser(
     prog='main.py',
@@ -22,7 +23,7 @@ config_group.add_argument("--board-size", type=int, default=36, help="The size o
 config_group.add_argument("--hand-sizes", type=int, default=5, help="The size of each players' hand")
 config_group.add_argument("--n-cards", type=int, default=80, help="The total number of numbered cards")
 config_group.add_argument("--n-finish", type=int, default=5, help="The total number of finish cards")
-config_group.add_argument("--start-discard-size", type=int, default=2, help="The number of cards to discard when the start card is played")
+config_group.add_argument("--start-discard-size", type=int, default=8, help="The number of cards to discard when the start card is played")
 config_group.add_argument("--pass-discard-size", type=int, default=2, help="The number of cards to discard when passing the turn")
 # Run config
 parser.add_argument("--games", type=int, default=10, help="The number of games to simulate")
@@ -120,7 +121,9 @@ best_game_results = { "outcome": None, "results": None, "metrics": None }
 
 
 def _process_game(game_id):
-    results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
     metrics = compute_metrics(game_config=config, player_remapping_dict=player_remapping_dict, percentage_digits=args.percentage_digits, **results)
     return game_id, results, metrics
 
