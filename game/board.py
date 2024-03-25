@@ -20,7 +20,9 @@ class Board:
         self.min_board = forward_fill_na(self.board)
 
     def check_if_position_legal(self, new_card, position, hand_size):
-        if hand_size == 0:
+        if position < 0 or position >= self.size:
+            return False
+        elif hand_size == 0:
             return False
         elif new_card == 0:
             return not self.start
