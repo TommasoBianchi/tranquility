@@ -55,8 +55,9 @@ class TommyAgent(Player):
 
         # Evaluate the board after playing each non-useless single card optimally
         evaluated_cards = sorted([(self._evaluate_card(card), card) for card in self.hand if card not in useless_cards + skip_cards], key=lambda el: -el[0][0])
-        worst_evaluated_cards = [card for _, card in evaluated_cards][:len(useless_cards)]
+        worst_evaluated_cards = [card for _, card in evaluated_cards][:n_to_discard - len(useless_cards)]
 
+        assert len(useless_cards + worst_evaluated_cards) == n_to_discard
         return useless_cards + worst_evaluated_cards
 
     def decide_discards_start(self, n_to_discard):
