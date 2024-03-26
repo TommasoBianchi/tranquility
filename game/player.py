@@ -138,6 +138,9 @@ class Player(ABC):
         else:
             action = self.decide_action()
             if action['type'] == 'P':
+                assert self.board.check_if_position_legal(action['card_played'], action['position'], len(self.hand) - 1), f"Illegal action {action}"
+                action_cost = self.board.get_action_cost(action['card_played'], action['position'])
+                assert action_cost == len(action['discards']), f"Wrong cost for action {action} (should be {action_cost})"
                 self.play_card(action['card_played'])
                 a = (action['type'], action['card_played'], action['position'], len(action['discards']))
             elif action['type'] == 'D':
