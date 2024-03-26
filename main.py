@@ -120,6 +120,7 @@ def print_metrics(game_id, metrics):
 n_wins = 0
 total_metrics = {}
 best_game_results = { "outcome": None, "results": None, "metrics": None }
+worst_game_results = { "outcome": None, "results": None, "metrics": None }
 
 
 def _process_game(game_id):
@@ -154,6 +155,18 @@ for game_id, results, metrics in process_map(
             "metrics": metrics
         }
 
+    # Update worst game
+    if worst_game_results["outcome"] is None or \
+        (worst_game_results["outcome"] == "WIN" and results["outcome"] == "LOSE") or \
+        (results["outcome"] == "WIN" and metrics["filled_board_spaces"] < worst_game_results["metrics"]["filled_board_spaces"]) or \
+        (results["outcome"] == "LOSE" and metrics["total_discarded_cards"] > worst_game_results["metrics"]["total_discarded_cards"]):
+        worst_game_results = {
+            "game_id": game_id,
+            "outcome": results["outcome"],
+            "results": results,
+            "metrics": metrics
+        }
+
     # Update total metrics
     for key, value in metrics.items():
         if isinstance(value, numbers.Number):
@@ -173,3 +186,6 @@ print_metrics(game_id="TOTAL", metrics=total_metrics)
 
 # Print best game metrics
 print_metrics(game_id=f"BEST (id: {best_game_results['game_id']}, seed: {args.start_seed + best_game_results['game_id']})", metrics=best_game_results["metrics"])
+
+# Print worst game metrics
+print_metrics(game_id=f"WORST (id: {worst_game_results['game_id']}, seed: {args.start_seed + worst_game_results['game_id']})", metrics=worst_game_results["metrics"])
