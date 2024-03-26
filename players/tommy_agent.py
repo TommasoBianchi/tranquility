@@ -20,7 +20,14 @@ class TommyAgent(Player):
         self._internal_board.board = np.copy(board.board)
 
     def _compute_useless_cards(self, skip_cards=[]):
-        return [card for card in self.hand if card not in skip_cards and not all([self.board.check_if_position_legal(card, position, hand_size=4) for position in range(self.board.size)])]
+        # NOTE: 0 (start) is always useless, n_cards+1 (finish) is useless iff I have more than one
+        number_of_finish = len([card for card in self.hand if card == self.n_cards + 1])
+        return [
+            card 
+            for card in self.hand 
+            if card not in skip_cards + [self.n_cards + 1] and \
+                not any([self.board.check_if_position_legal(card, position, hand_size=4) for position in range(self.board.size)])
+        ] + [self.n_cards + 1] * (number_of_finish - 1)
 
     def _evaluate_card(self, card):
         best_value = 1000000
@@ -49,12 +56,15 @@ class TommyAgent(Player):
         if n_to_discard == 0:
             return []
 
+        if n_to_discard == len([card for card in self.hand if card not in skip_cards]):
+            return [card for card in self.hand if card not in skip_cards]
+
         useless_cards = self._compute_useless_cards(skip_cards=skip_cards)
         if len(useless_cards) >= n_to_discard:
             return useless_cards[:n_to_discard]
 
         # Evaluate the board after playing each non-useless single card optimally
-        evaluated_cards = sorted([(self._evaluate_card(card), card) for card in self.hand if card not in useless_cards + skip_cards], key=lambda el: -el[0][0])
+        evaluated_cards = sorted([(self._evaluate_card(card), card) for card in self.hand if card not in useless_cards + skip_cards + [self.n_cards + 1]], key=lambda el: -el[0][0])
         worst_evaluated_cards = [card for _, card in evaluated_cards][:n_to_discard - len(useless_cards)]
 
         assert len(useless_cards + worst_evaluated_cards) == n_to_discard
