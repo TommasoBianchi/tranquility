@@ -8,7 +8,7 @@ class TommyAgent(Player):
         self._internal_board = None
         
         # Config
-        self.max_admissible_discards = 2  # TODO: make it depend on game config
+        self.max_admissible_discards = len(initial_hand) // 2
 
     def observe_board(self, board):
         '''
@@ -119,9 +119,8 @@ class TommyAgent(Player):
         # Compute num of discards for each move
         possible_moves = [(card, position, self.board.get_action_cost(card, position)) for card, position in possible_moves]
 
-        # print(f"Board: {self.board.board}")
-        # print(f"Hand: {self.hand}")
-        # print(f"Possible moves: {possible_moves}")
+        # Remove moves with too many discards
+        possible_moves = [move for move in possible_moves if move[2] <= min(len(self.hand) - 1, self.max_admissible_discards)]
 
         if len(possible_moves) == 0:
             return { "type": "D", "discards": self._decide_discards(2) }
