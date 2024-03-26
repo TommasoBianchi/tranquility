@@ -28,16 +28,22 @@ class TommyAgent(Player):
 
         for position in range(self.board.size):
             if self.board.check_if_position_legal(card, position, hand_size=4):
-                old_card = self._internal_board.board[position]
-                self._internal_board.board[position] = card
-                value = evaluate_board(self._internal_board)
-                self._internal_board.board[position] = old_card
+                value = self._evaluate_play_action(card, position)
 
                 if value < best_value:
                     best_value = value
                     best_position = position
 
         return best_value, best_position
+
+    def _evaluate_play_action(self, card, position, n_discards=0):
+        old_card = self._internal_board.board[position]
+        self._internal_board.board[position] = card
+        value = evaluate_board(self._internal_board)
+        self._internal_board.board[position] = old_card
+
+        return value + (10 * n_discards) ** 2
+
 
     def _decide_discards(self, n_to_discard, skip_cards=[]):
         if n_to_discard == 0:
