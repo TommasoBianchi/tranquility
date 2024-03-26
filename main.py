@@ -158,8 +158,8 @@ for game_id, results, metrics in process_map(
     # Update worst game
     if worst_game_results["outcome"] is None or \
         (worst_game_results["outcome"] == "WIN" and results["outcome"] == "LOSE") or \
-        (results["outcome"] == "WIN" and metrics["filled_board_spaces"] < worst_game_results["metrics"]["filled_board_spaces"]) or \
-        (results["outcome"] == "LOSE" and metrics["total_discarded_cards"] > worst_game_results["metrics"]["total_discarded_cards"]):
+        (results["outcome"] == "LOSE" and metrics["filled_board_spaces"] < worst_game_results["metrics"]["filled_board_spaces"]) or \
+        (results["outcome"] == "WIN" and metrics["total_discarded_cards"] > worst_game_results["metrics"]["total_discarded_cards"]):
         worst_game_results = {
             "game_id": game_id,
             "outcome": results["outcome"],
