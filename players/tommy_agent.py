@@ -125,9 +125,15 @@ class TommyAgent(Player):
         if len(possible_moves) == 0:
             return { "type": "D", "discards": self._decide_discards(2) }
 
-        # TODO: sort cards by board value
+        # Select best move by evaluating resulting board value
+        evaluated_moves = [(card, position, n_discards, self._evaluate_play_action(card, position, n_discards)) for card, position, n_discards in possible_moves]
 
-        card, position, n_discards = possible_moves[0]
+        best_move = evaluated_moves[0]
+        for move in evaluated_moves[1:]:
+            if move[3] < best_move[3]:
+                best_move = move
+
+        card, position, n_discards, _ = best_move
         return {'type': 'P', 'card_played': card, 'position': position, 'discards': self._decide_discards(n_discards, skip_cards=[card]) }
 
 def evaluate_board(board):
