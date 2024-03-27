@@ -3,7 +3,7 @@ from game.board import Board
 from game.game_setup import setup_game
 from .config import GameConfig
 
-def run_game(seed: int, config: GameConfig, player_types):    
+def run_game(seed: int, config: GameConfig, player_types, print_history=False):    
 
     # Setup game    
     decks, initial_hands = setup_game(
@@ -35,16 +35,25 @@ def run_game(seed: int, config: GameConfig, player_types):
 
     start, start_player_id = False, -1
     win, lose = False, False
+    turn_counter = 0
     while not lose and not win:
         for player in players:
+            turn_counter += 1
+
+            if print_history:
+                print("")
+                print(("-" * 20) + f"Turn {turn_counter}" + ("-" * 20))
+                print(f"Player {player.id} ({player.__class__.__name__}) hand: {player.hand}")
+                print(board.board)
+
             player.observe_board(board)
             player.observe_players(players)
             if start:
-                player.play(start_turn_discards=start_discards[player.id])
+                player.play(start_turn_discards=start_discards[player.id], print_history=print_history)
                 if player.id == start_player_id:
                     start = False
             else:
-                a = player.play()
+                a = player.play(print_history=print_history)
                 if a[0] == 'S':
                     start = True
                     start_player_id = player.id

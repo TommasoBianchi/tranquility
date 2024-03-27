@@ -119,25 +119,35 @@ class Player(ABC):
             self.players_hand_sizes[player.id] = len(player.hand)
             self.players_deck_sizes[player.id] = len(player.deck)
 
-    def play(self, start_turn_discards=0):
+    def play(self, start_turn_discards=0, print_history=False):
         '''
         main function, return an action in the form of a dictionary
         '''
         if not self.check_if_alive(start_turn_discards):
+            if print_history:
+                print("ACTION: lose")
             return ('F', -1)
         if self.is_start_mandatory():
             a = ('S')
             self.play_card(0)
+            if print_history:
+                print("ACTION: play start card")
         elif self.n_cards + 1 in self.hand and sum(np.isnan(self.board.board))==0:
             a = ('W')
             self.play_card(self.n_cards + 1)
+            if print_history:
+                print("ACTION: play finish card (win)")
         elif start_turn_discards > 0:
             action = self.decide_discards_start(n_to_discard=start_turn_discards)
             self.discard_cards(action['discards'])
             a = ('DS', len(action['discards']))
+            if print_history:
+                print(f"ACTION: discard for start card ({action['discards']})")
         else:
             action = self.decide_action()
             if action['type'] == 'P':
+                if print_history:
+                    print(f"ACTION: play card {action['card_played']} in position {action['position']} discarding {action['discards']}")
                 assert self.board.check_if_position_legal(action['card_played'], action['position'], len(self.hand) - 1), f"Illegal action {action}"
                 action_cost = self.board.get_action_cost(action['card_played'], action['position'])
                 assert action_cost == len(action['discards']), f"Wrong cost for action {action} (should be {action_cost})"
@@ -145,6 +155,8 @@ class Player(ABC):
                 a = (action['type'], action['card_played'], action['position'], len(action['discards']))
             elif action['type'] == 'D':
                 a = (action['type'])
+                if print_history:
+                    print(f"ACTION: discard to pass ({action['discards']})")
                 assert len(action['discards']) == self.pass_discard_size
             self.discard_cards(action['discards'])
         self.update_hand()

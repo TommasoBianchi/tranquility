@@ -34,6 +34,7 @@ parser.add_argument("--num-processes", type=int, default=cpu_count(), help=f"The
 metrics_group = parser.add_argument_group("metrics", "Metrics display configurations")
 metrics_group.add_argument("--print-metrics-every-game", action="store_true", default=False, help="Whether to print metrics for every game")
 metrics_group.add_argument("--percentage-digits", type=int, default=2, help="The number of digits to use when rounding percentage metrics")
+metrics_group.add_argument("--print-game-history", action="store_true", default=False, help="Whether to print the full history for every game")
 
 args = parser.parse_args()
 
@@ -126,7 +127,7 @@ worst_game_results = { "outcome": None, "results": None, "metrics": None }
 def _process_game(game_id):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types)
+        results = run_game(seed=args.start_seed + game_id, config=config, player_types=player_types, print_history=args.print_game_history)
     metrics = compute_metrics(game_config=config, player_remapping_dict=player_remapping_dict, percentage_digits=args.percentage_digits, **results)
     return game_id, results, metrics
 
