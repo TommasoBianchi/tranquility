@@ -49,7 +49,9 @@ class TommyAgent(Player):
         value = evaluate_board(self._internal_board)
         self._internal_board.board[position] = old_card
 
-        return value + (10 * n_discards) ** 2
+        closes_gap = position > 0 and position < self.board.size - 1 and not np.isnan(self.board.board[position - 1]) and not np.isnan(self.board.board[position + 1])
+
+        return value + (10 * (n_discards - (0.5 if closes_gap else 0))) ** 2
 
 
     def _decide_discards(self, n_to_discard, skip_cards=[]):
