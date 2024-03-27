@@ -19,15 +19,24 @@ class TommyAgent(Player):
             self._internal_board = Board(size=board.size, n_cards=board.n_cards)
         self._internal_board.board = np.copy(board.board)
 
-    def _compute_useless_cards(self, skip_cards=[]):
+    def _compute_useless_cards(self, skip_cards=[], current_play_move=None):
+        if current_play_move is not None:
+            assert np.isnan(self._internal_board.board[current_play_move[1]])
+            self._internal_board.board[current_play_move[1]] = current_play_move[0]
+
         # NOTE: 0 (start) is always useless, n_cards+1 (finish) is useless iff I have more than one
         number_of_finish = len([card for card in self.hand if card == self.n_cards + 1])
-        return [
+        useless_cards = [
             card 
             for card in self.hand 
             if card not in skip_cards + [self.n_cards + 1] and \
-                not any([self.board.check_if_position_legal(card, position, hand_size=4) for position in range(self.board.size)])
+                not any([self._internal_board.check_if_position_legal(card, position, hand_size=4) for position in range(self._internal_board.size)])
         ] + [self.n_cards + 1] * (number_of_finish - 1)
+
+        if current_play_move is not None:
+            self._internal_board.board[current_play_move[1]] = np.nan
+
+        return useless_cards
 
     def _evaluate_card(self, card):
         best_value = 1000000
@@ -44,24 +53,24 @@ class TommyAgent(Player):
         return best_value, best_position
 
     def _evaluate_play_action(self, card, position, n_discards=0):
-        old_card = self._internal_board.board[position]
+        assert np.isnan(self._internal_board.board[position])
         self._internal_board.board[position] = card
         value = evaluate_board(self._internal_board)
-        self._internal_board.board[position] = old_card
+        self._internal_board.board[position] = np.nan
 
         closes_gap = position > 0 and position < self.board.size - 1 and not np.isnan(self.board.board[position - 1]) and not np.isnan(self.board.board[position + 1])
 
         return value + (10 * (n_discards - (0.5 if closes_gap else 0))) ** 2
 
 
-    def _decide_discards(self, n_to_discard, skip_cards=[]):
+    def _decide_discards(self, n_to_discard, skip_cards=[], current_play_move=None):
         if n_to_discard == 0:
             return []
 
         if n_to_discard == len([card for card in self.hand if card not in skip_cards]):
             return [card for card in self.hand if card not in skip_cards]
 
-        useless_cards = self._compute_useless_cards(skip_cards=skip_cards)
+        useless_cards = self._compute_useless_cards(skip_cards=skip_cards, current_play_move=None)
         if len(useless_cards) >= n_to_discard:
             return useless_cards[:n_to_discard]
 
@@ -146,7 +155,7 @@ class TommyAgent(Player):
                 best_move = move
 
         card, position, n_discards, _ = best_move
-        return {'type': 'P', 'card_played': card, 'position': position, 'discards': self._decide_discards(n_discards, skip_cards=[card]) }
+        return {'type': 'P', 'card_played': card, 'position': position, 'discards': self._decide_discards(n_discards, skip_cards=[card], current_play_move=(card, position)) }
 
 def evaluate_board(board):
     cards_value = 0
