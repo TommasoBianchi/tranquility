@@ -52,11 +52,13 @@ class TommyAgent(Player):
 
         return best_value, best_position
 
-    def _evaluate_play_action(self, card, position, n_discards=0):
+    def _evaluate_play_action(self, card, position):
         assert np.isnan(self._internal_board.board[position])
         self._internal_board.board[position] = card
         value = evaluate_board(self._internal_board)
         self._internal_board.board[position] = np.nan
+
+        n_discards = self.board.get_action_cost(card, position)
 
         closes_gap = position > 0 and position < self.board.size - 1 and not np.isnan(self.board.board[position - 1]) and not np.isnan(self.board.board[position + 1])
 
@@ -147,7 +149,7 @@ class TommyAgent(Player):
             return { "type": "D", "discards": self._decide_discards(2) }
 
         # Select best move by evaluating resulting board value
-        evaluated_moves = [(card, position, n_discards, self._evaluate_play_action(card, position, n_discards)) for card, position, n_discards in possible_moves]
+        evaluated_moves = [(card, position, n_discards, self._evaluate_play_action(card, position)) for card, position, n_discards in possible_moves]
 
         best_move = evaluated_moves[0]
         for move in evaluated_moves[1:]:
