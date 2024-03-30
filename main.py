@@ -1,5 +1,6 @@
 from game import run_game, GameConfig
 from game.player import Player
+from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 import argparse
 from collections import Counter
@@ -138,7 +139,7 @@ for game_id, results, metrics in process_map(
     max_workers=args.num_processes,
     chunksize=max(1, args.games // args.num_processes),
     disable=args.print_metrics_every_game
-):
+) if args.num_processes > 1 else tqdm(map(_process_game, range(args.games)), disable=args.print_metrics_every_game):
 
     # Count wins
     if results["outcome"] == "WIN":
