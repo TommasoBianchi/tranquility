@@ -41,7 +41,6 @@ class Board:
         elif new_card == self.n_cards+1:
             return (not self.finish) and (self._empty_board_positions.sum() == 0)
         elif self.get_action_cost(new_card, position) <= hand_size:
-            self.__update_board_internals()
             return ((self.min_board <= new_card) * (self.max_board >=new_card))[position]
         else:
             return False

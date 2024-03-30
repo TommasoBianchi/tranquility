@@ -23,6 +23,7 @@ class TommyAgent(Player):
         if current_play_move is not None:
             assert np.isnan(self._internal_board.board[current_play_move[1]])
             self._internal_board.board[current_play_move[1]] = current_play_move[0]
+            self._internal_board.__update_board_internals()
 
         # NOTE: 0 (start) is always useless, n_cards+1 (finish) is useless iff I have more than one
         number_of_finish = len([card for card in self.hand if card == self.n_cards + 1])
@@ -35,6 +36,7 @@ class TommyAgent(Player):
 
         if current_play_move is not None:
             self._internal_board.board[current_play_move[1]] = np.nan
+            self._internal_board.__update_board_internals()
 
         return useless_cards
 
