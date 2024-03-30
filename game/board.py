@@ -1,5 +1,6 @@
 import numpy as np
 from bottleneck import push
+from hashlib import sha512
 
 def forward_fill_na(arr):
     return push(arr)
@@ -12,12 +13,21 @@ class Board:
         self.size = size
         self.n_cards = n_cards
         self.board = np.repeat(np.nan, size)
+        self._board_sha = None
         self.min_board, self.max_board = np.repeat(np.nan, size), np.repeat(np.nan, size)
         self.start, self.finish = False, False
 
+    def __board_changed(self):
+        current_board_sha = sha512(np.ascontiguousarray(self.board)).hexdigest()
+        if self._board_sha != current_board_sha:
+            self._board_sha = current_board_sha
+            return True
+        return False
+
     def __update_minmax_board(self):
-        self.max_board = backward_fill_na(self.board)
-        self.min_board = forward_fill_na(self.board)
+        if self.__board_changed():
+            self.max_board = np.nan_to_num(backward_fill_na(self.board), nan=self.n_cards + 1)
+            self.min_board = np.nan_to_num(forward_fill_na(self.board), nan=0)
 
     def check_if_position_legal(self, new_card, position, hand_size):
         if position < 0 or position >= self.size:
@@ -29,8 +39,8 @@ class Board:
         elif new_card == self.n_cards+1:
             return (not self.finish) and (sum(np.isnan(self.board))==0)
         elif self.get_action_cost(new_card, position) <= hand_size:
-            return np.where((np.nan_to_num(self.min_board, nan=0)<=new_card)*\
-                            (np.nan_to_num(self.max_board, nan=self.n_cards+1)>=new_card), True, False)[position]
+            self.__update_minmax_board()
+            return ((self.min_board <= new_card) * (self.max_board >=new_card))[position]
         else:
             return False
     
