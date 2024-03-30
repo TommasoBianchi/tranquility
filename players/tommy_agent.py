@@ -22,8 +22,8 @@ class TommyAgent(Player):
     def _check_useless_card(self, card):
         for position in range(self._internal_board.size):
             if self._internal_board.check_if_position_legal(card, position, hand_size=len(self.hand) - 1):
-                return True
-        return False
+                return False
+        return True
 
     def _compute_useless_cards(self, skip_cards=[], current_play_move=None):
         if current_play_move is not None:
