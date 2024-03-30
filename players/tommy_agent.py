@@ -50,7 +50,7 @@ class TommyAgent(Player):
         best_position = 0
 
         for position in range(self.board.size):
-            if self.board.check_if_position_legal(card, position, hand_size=4):
+            if self.board.check_if_position_legal(card, position, hand_size=len(self.hand) - 1):
                 value = self._evaluate_play_action(card, position)
 
                 if value < best_value:
@@ -110,11 +110,11 @@ class TommyAgent(Player):
             best_spot_floor = int(best_spot)
             best_spot_ceil = int(best_spot + 1)
 
-            if self.board.check_if_position_legal(card, best_spot_floor, hand_size=4) and \
+            if self.board.check_if_position_legal(card, best_spot_floor, hand_size=len(self.hand) - 1) and \
                 (best_spot_floor == 0 or np.isnan(self.board.board[best_spot_floor-1])) and \
                 (best_spot_floor == self.board.size-1 or np.isnan(self.board.board[best_spot_floor+1])):
                 possible_moves.append((card, best_spot_floor))
-            if self.board.check_if_position_legal(card, best_spot_ceil, hand_size=4) and \
+            if self.board.check_if_position_legal(card, best_spot_ceil, hand_size=len(self.hand) - 1) and \
                 (best_spot_ceil == 0 or np.isnan(self.board.board[best_spot_ceil-1])) and \
                 (best_spot_ceil == self.board.size-1 or np.isnan(self.board.board[best_spot_ceil+1])):
                 possible_moves.append((card, best_spot_ceil))
@@ -133,17 +133,17 @@ class TommyAgent(Player):
                 min_higher_card_position = self.board.size
             
             middle_position = int(max_lower_card_position + (card - max_lower_card) / (min_higher_card - max_lower_card) * (min_higher_card_position - max_lower_card_position))
-            if self.board.check_if_position_legal(card, middle_position, hand_size=4) and \
+            if self.board.check_if_position_legal(card, middle_position, hand_size=len(self.hand) - 1) and \
                (middle_position == 0 or np.isnan(self.board.board[middle_position-1])) and \
                (middle_position == self.board.size-1 or np.isnan(self.board.board[middle_position+1])):
                 possible_moves.append((card, middle_position))
 
             # Add a move to play it immediately to the right of the max lower one (if possible)
-            if self.board.check_if_position_legal(card, max_lower_card_position+1, hand_size=4):
+            if self.board.check_if_position_legal(card, max_lower_card_position+1, hand_size=len(self.hand) - 1):
                 possible_moves.append((card, max_lower_card_position+1))
 
             # Add a move to play it immediately to the left of the min higher one (if possible)
-            if self.board.check_if_position_legal(card, min_higher_card_position-1, hand_size=4):
+            if self.board.check_if_position_legal(card, min_higher_card_position-1, hand_size=len(self.hand) - 1):
                 possible_moves.append((card, min_higher_card_position-1))
 
         # Compute num of discards for each move
