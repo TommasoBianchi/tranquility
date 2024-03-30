@@ -167,27 +167,18 @@ class TommyAgent(Player):
         return {'type': 'P', 'card_played': card, 'position': position, 'discards': self._decide_discards(n_discards, skip_cards=[card], current_play_move=(card, position)) }
 
 def evaluate_board(board):
-    cards_value = 0
-    gaps_value = 0
+    positions = np.arange(board.size)
+    cards_value = np.nansum((board.board - positions / board.size * board.n_cards) ** 2)
 
-    played_cards = []
-    prev_card = None
-    prev_card_position = None
-    for position, card in enumerate(board.board):
-        if not np.isnan(card):
-            cards_value += (card - position / board.size * board.n_cards) ** 2
+    played_cards_mask = ~np.isnan(board.board)
+    played_cards = board.board[played_cards_mask]
+    played_cards_positions = positions[played_cards_mask]
 
-            if prev_card is not None and position - prev_card_position > card - prev_card:
-                return 1000000
+    if (played_cards_positions[1:] - played_cards_positions[:-1] > played_cards[1:] - played_cards[:-1]).any():
+        # Infeasible board
+        return 1000000
 
-            played_cards.append(card)
-            prev_card = card
-            prev_card_position = position
-
-    for i in range(len(played_cards)-1):
-        gap_length = played_cards[i+1] - played_cards[i]
-        if gap_length == 1:
-            continue
-        gaps_value = (gap_length - 2 / board.size * board.n_cards) ** 2
+    gaps_lengths = played_cards[1:] - played_cards[:-1]
+    gaps_value = ((gaps_lengths[gaps_lengths > 1] - 2 / board.size * board.n_cards) ** 2).sum()
 
     return cards_value + gaps_value
