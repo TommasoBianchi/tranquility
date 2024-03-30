@@ -19,6 +19,12 @@ class TommyAgent(Player):
             self._internal_board = Board(size=board.size, n_cards=board.n_cards)
         self._internal_board.board = np.copy(board.board)
 
+    def _check_useless_card(self, card):
+        for position in range(self._internal_board.size):
+            if self._internal_board.check_if_position_legal(card, position, hand_size=len(self.hand) - 1):
+                return True
+        return False
+
     def _compute_useless_cards(self, skip_cards=[], current_play_move=None):
         if current_play_move is not None:
             assert np.isnan(self._internal_board.board[current_play_move[1]])
@@ -30,8 +36,7 @@ class TommyAgent(Player):
         useless_cards = [
             card 
             for card in self.hand 
-            if card not in skip_cards + [self.n_cards + 1] and \
-                not any([self._internal_board.check_if_position_legal(card, position, hand_size=4) for position in range(self._internal_board.size)])
+            if card not in skip_cards and card != self.n_cards + 1 and self._check_useless_card(card)
         ] + [self.n_cards + 1] * (number_of_finish - 1)
 
         if current_play_move is not None:
