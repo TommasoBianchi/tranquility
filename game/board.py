@@ -45,26 +45,17 @@ class Board:
             return False
     
     def get_action_cost(self, new_card, position):
-        # corner cases
-        if position == self.size-1:
-            if np.isnan(self.board[position-1]):
-                return 0
-            else:
-                return int(new_card - self.board[position-1])
-        if position == 0:
-            if np.isnan(self.board[position+1]):
-                return 0
-            else:
-                return int(self.board[position+1]-new_card)
-        
-        if np.isnan(self.board[position-1]) and np.isnan(self.board[position+1]):
+        left_nan = position == 0 or np.isnan(self.board[position - 1])
+        right_nan = position == self.size - 1 or np.isnan(self.board[position + 1])
+
+        if left_nan and right_nan:
             return 0
-        elif np.isnan(self.board[position-1]): 
-            return int(self.board[position+1]-new_card)
-        elif  np.isnan(self.board[position+1]):
-            return int(new_card - self.board[position-1])
+        elif left_nan:
+            return int(self.board[position + 1] - new_card)
+        elif right_nan:
+            return int(new_card - self.board[position - 1])
         else:
-            return int(min([new_card - self.board[position-1], self.board[position+1]-new_card]))
+            return int(min([new_card - self.board[position - 1], self.board[position + 1] - new_card]))
     
     def check_completion(self):
         return bool(self.start*self.finish*(sum(np.isnan(self.board))==0))
