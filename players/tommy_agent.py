@@ -181,4 +181,4 @@ def evaluate_board(board):
     gaps_lengths = played_cards[1:] - played_cards[:-1]
     gaps_value = ((gaps_lengths[gaps_lengths > 1] - 2 / board.size * board.n_cards) ** 2).sum()
 
-    return cards_value + gaps_value
+    return cards_value # + gaps_value
