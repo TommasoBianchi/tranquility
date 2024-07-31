@@ -8,7 +8,9 @@
         "vscode": {
             "settings": {
                 "python.defaultInterpreterPath": ".venv/bin/python",
-                "ruff.path": "/root/.cargo/bin/ruff",
+                "ruff.path": [
+                    "/root/.cargo/bin/ruff"
+                ],
                 "editor.formatOnSave": true,
                 "notebook.formatOnSave.enabled": true
             },
