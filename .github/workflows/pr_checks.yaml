@@ -4,6 +4,10 @@ on:
   pull_request:
       types:
         - ready_for_review
+        - opened
+        - edited
+        - reopened
+        - synchronize
 
 jobs:
   ruff:
