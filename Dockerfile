@@ -9,3 +9,6 @@ RUN apt install -y git curl
 # Install package manager (PDM)
 RUN curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 ENV PATH=/root/.local/bin:$PATH
+
+# Install formatter and linter (Ruff)
+RUN curl -LsSf https://astral.sh/ruff/install.sh | sh
