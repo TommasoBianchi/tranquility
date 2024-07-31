@@ -1,0 +1,14 @@
+{
+    "name": "tranquility-dev-environment",
+    "build": {
+        "context": "..",
+        "dockerfile": "../Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}
