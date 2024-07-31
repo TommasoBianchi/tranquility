@@ -3,15 +3,15 @@ from game.board import Board
 from game.game_setup import setup_game
 from .config import GameConfig
 
-def run_game(seed: int, config: GameConfig, player_types):    
 
-    # Setup game    
+def run_game(seed: int, config: GameConfig, player_types):
+    # Setup game
     decks, initial_hands = setup_game(
         n_players=config.n_players,
         n_cards=config.n_cards,
         n_finish=config.n_finish,
         hand_sizes=config.hand_sizes,
-        seed=seed
+        seed=seed,
     )
 
     # Init players
@@ -22,8 +22,9 @@ def run_game(seed: int, config: GameConfig, player_types):
             n_players=config.n_players,
             pass_discard_size=config.pass_discard_size,
             deck=decks[i],
-            initial_hand=initial_hands[i]
-        ) for i in range(config.n_players)
+            initial_hand=initial_hands[i],
+        )
+        for i in range(config.n_players)
     ]
 
     # Init board
@@ -45,14 +46,14 @@ def run_game(seed: int, config: GameConfig, player_types):
                     start = False
             else:
                 a = player.play()
-                if a[0] == 'S':
+                if a[0] == "S":
                     start = True
                     start_player_id = player.id
                     board.receive_card(0, 0, len(player.hand))
-                elif a[0] == 'P':
-                    board.receive_card(a[1], a[2], len(player.hand)+1+a[3])
+                elif a[0] == "P":
+                    board.receive_card(a[1], a[2], len(player.hand) + 1 + a[3])
                     win = board.check_completion()
-                elif a[0] == 'F':
+                elif a[0] == "F":
                     lose = True
             if win or lose:
                 break
@@ -62,6 +63,5 @@ def run_game(seed: int, config: GameConfig, player_types):
     return {
         "outcome": "WIN" if np.isnan(board.board).sum() == 0 else "LOSE",
         "history": {player.id: player.action_history for player in players},
-        "final_board": board.board
+        "final_board": board.board,
     }
-

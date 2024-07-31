@@ -1,0 +1,25 @@
+{
+    "name": "tranquility-dev-environment",
+    "build": {
+        "context": "..",
+        "dockerfile": "../Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": ".venv/bin/python",
+                "ruff.path": [
+                    "/root/.cargo/bin/ruff"
+                ],
+                "editor.formatOnSave": true,
+                "notebook.formatOnSave.enabled": true
+            },
+            "extensions": [
+                "ms-python.python",
+                "charliermarsh.ruff"
+            ]
+        }
+    },
+    "remoteUser": "ubuntu",
+    "postStartCommand": "pdm install; pdm run pre-commit install"
+}
