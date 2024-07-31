@@ -20,5 +20,6 @@
             ]
         }
     },
-    "postStartCommand": "pdm install; pre-commit install"
+    "remoteUser": "ubuntu",
+    "postStartCommand": "pdm install; pdm run pre-commit install"
 }
