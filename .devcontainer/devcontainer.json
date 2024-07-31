@@ -20,5 +20,5 @@
             ]
         }
     },
-    "postStartCommand": "pdm install"
+    "postStartCommand": "pdm install; pre-commit install"
 }
