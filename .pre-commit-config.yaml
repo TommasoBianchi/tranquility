@@ -15,3 +15,11 @@ repos:
     - id: check-shebang-scripts-are-executable
     - id: trailing-whitespace
     - id: debug-statements
+# Ruff
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.5.5
+  hooks:
+    # Run the linter.
+    - id: ruff
+    # Run the formatter.
+    - id: ruff-format
