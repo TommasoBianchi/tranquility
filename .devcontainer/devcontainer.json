@@ -7,10 +7,14 @@
     "customizations": {
         "vscode": {
             "settings": {
-                "python.defaultInterpreterPath": ".venv/bin/python"
+                "python.defaultInterpreterPath": ".venv/bin/python",
+                "ruff.path": "/root/.cargo/bin/ruff",
+                "editor.formatOnSave": true,
+                "notebook.formatOnSave.enabled": true
             },
             "extensions": [
-                "ms-python.python"
+                "ms-python.python",
+                "charliermarsh.ruff"
             ]
         }
     },

@@ -1,3 +1,5 @@
 {
-    "python.defaultInterpreterPath": ".venv/bin/python"
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "editor.formatOnSave": true,
+    "notebook.formatOnSave.enabled": true
 }
