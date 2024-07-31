@@ -6,9 +6,13 @@
     },
     "customizations": {
         "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": ".venv/bin/python"
+            },
             "extensions": [
                 "ms-python.python"
             ]
         }
-    }
+    },
+    "postStartCommand": "pdm install"
 }
