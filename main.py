@@ -11,9 +11,10 @@ from os.path import dirname, join
 from os import cpu_count
 import numpy as np
 import warnings
+import pino
 
 parser = argparse.ArgumentParser(
-    prog="main.py", description="Entrypoint for the Tranquillity game simulator"
+    prog="main.py" , description="Entrypoint for the Tranquillity game simulator"
 )
 # Game config
 config_group = parser.add_argument_group("config", "Game configurations")
